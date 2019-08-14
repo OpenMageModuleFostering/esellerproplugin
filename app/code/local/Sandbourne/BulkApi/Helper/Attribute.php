@@ -50,9 +50,7 @@ class Sandbourne_BulkApi_Helper_Attribute extends Mage_Core_Helper_Abstract
     {
       foreach ($productData->CustomGroups->CustomGroup as $customGroup)
       {         
-        // Test we want to import from this Customfield Group
-        // What Customfield Groups do we want to use, or all of them if field is blank?
-        // (JC) - Change this approach, if blank use the default "Magento" group.
+        // What Customfield Groups do we want to use, if field is blank then use the default "Magento" group.
         if ($this->canProcessCustomFieldGroup($productData->UseCustomGroups, $customGroup['groupName']))
         {
           $this->setCustomFieldValues($magentoProduct, $customGroup, $attributeCache);
@@ -74,8 +72,8 @@ class Sandbourne_BulkApi_Helper_Attribute extends Mage_Core_Helper_Abstract
         // Check the custom field name about to be added is valid
         if ($productUtils->isCustomFieldValid($nameValueList->Name) === true)
         {
-          $replacedChars = $productUtils->replaceInvalidChars($nameValueList->Name);
-          $this->setCustomFieldValue($magentoProduct, $replacedChars, $nameValueList->Value, $attributeCache);
+          $replacedChars = $productUtils->replaceInvalidChars($nameValueList->Name);          
+          $this->setCustomFieldValue($magentoProduct, $replacedChars, (string)$nameValueList->Value, $attributeCache);
         }
       }
     }
@@ -87,12 +85,12 @@ class Sandbourne_BulkApi_Helper_Attribute extends Mage_Core_Helper_Abstract
     $FieldsToUse = trim((string)$customFieldGroupToUse);
     $FieldGroupName = trim((string)$customFieldGroupName);
     
-    // (JC) - If blank use the default "Magento" group if it exists.
+    // If blank use the default "Magento" group if it exists.
     if (empty($FieldsToUse))
     {
       $FieldsToUse = "Magento";
     }
-    
+        
     //if ((strpos((string)$customFieldGroupToUse, (string)$customFieldGroupName) !== false) || strlen(trim($customFieldGroupToUse)) === 0)
     if (strpos($FieldsToUse, $FieldGroupName) !== false)
     {
@@ -102,39 +100,60 @@ class Sandbourne_BulkApi_Helper_Attribute extends Mage_Core_Helper_Abstract
   }
           
   private function setCustomFieldValue($magentoProduct, $attributeName, $attributeValue, $attributeCache)
-  {
-    $attribute = $attributeCache->getAttribute($attributeName);
-    if (is_null($attribute))
+  { 
+    // Get the attribute collection
+    $attribute = $magentoProduct->getResource()->getAttribute($attributeName);
+    
+    // Does the attribute exist?
+    if (empty($attribute))
     {
-      $attribute = $this->createAttribute($attributeName, $magentoProduct->getAttributeSetId());
-      $attributeCache->addAttribute($attribute);      
+      // Create new attribute
+      $attribute = $this->createAttribute($attributeName, $magentoProduct->getAttributeSetId());  // TODO: Optimise the createAttribute method
     }
-    //We are not going to mess about with putting attributes
-    //in sets if the customer has organised it differently    
+  
+    // We are not going to mess about with putting attributes in sets if the customer has organised it differently    
     if ($attribute->isInSet($magentoProduct->getAttributeSetId()))
     {
+      
       $this->getDefaultAttributeGroupId($magentoProduct->getAttributeSetId());
       if (!is_null($attribute))
       {
-        if ($attribute->usesSource())
+        switch ($attribute->getFrontendInput())
         {
-          $attributeOption = $attributeCache->getAttributeOption($attributeName, $attributeValue);
-          //$attributeValueId = $this->findAttributeValueId($attributeValue, $attribute->getSource()->getAllOptions());
-          //$this->_debug('attribute value id:'.$attributeValueId);
-          if (is_null($attributeOption))
-          {
-            $attributeOption = $this->addAttributeOption($attributeValue, $attribute, $attributeCache);
-          }
-          //$this->_debug('setting attribute: '.$attribute->getAttributeCode().' to: '.$attributeOption['value']);
-          //$this->_debug('previous attribute value: '.$attribute->getAttributeCode().' to: '.$magentoProduct->getData($attribute->getAttributeCode()));
-
-          $magentoProduct->setData($attribute->getAttributeCode(), $attributeOption['value']);
+          case "select":
+            $this->setOrAddOptionAttribute($magentoProduct, $attributeName, $attributeValue);
+            break;
+              
+          case "date":
+            // Dates need to be in the format of dd/mm/yyyy
+            $dateField = trim(str_replace("-", "/", str_replace(".", "/", $attributeValue)));      
+            $findLast = strrpos($dateField, "/");
+            $dateDayMonth = substr($dateField, 0, $findLast);
+            $dateYear = substr($dateField, $findLast + 1);
+                            
+            if (strlen($dateYear) < 4)
+            {
+              // This means we need to prefix the year with the century
+              $dateField = $dateDayMonth . "/20" . $dateYear;
+            }
+            $magentoProduct->setData($attributeName, $dateField);
+            break;
+                 
+          case "boolean":
+            $booleanValue = false;
+            $testString = trim(strtolower($attributeValue));
+            if ($testString == "y" or $testString == "yes" or $testString == "on" or $testString == "true")
+            {
+              $booleanValue = true;
+            }
+            $magentoProduct->setData($attributeName, $booleanValue);
+            break;
+              
+          // For "text" and "textarea"  
+          default:
+            $magentoProduct->setData($attributeName, $attributeValue);
+            break;
         }
-        else
-        {
-
-        }
-        //$this->_debug($attribute->getFrontendLabel().':'.$attribute->getBackendType());
       }
     }
   }
@@ -147,8 +166,6 @@ class Sandbourne_BulkApi_Helper_Attribute extends Mage_Core_Helper_Abstract
   
     $attributeCode = strtolower($attributeName);
     //$attributeCode = str_replace(' ', '_', $attributeCode);
-    //$this->_debug($attributeCode);
-    //$this->_debug($attributeName);
   
     $data['attribute_code'] = $attributeCode;
     $data['frontend_label'] = array($attributeName, '','','','');
@@ -165,12 +182,10 @@ class Sandbourne_BulkApi_Helper_Attribute extends Mage_Core_Helper_Abstract
     $defaultGroupId = $this->getDefaultAttributeGroupId($attributeSetId);
     $attribute->setAttributeGroupId($defaultGroupId);
     
-    //$this->_debug('going to create attribute with set id: '.$attribute->getAttributeSetId().' and group id: '.$attribute->getAttributeGroupId());
     $entityTypeID = Mage::getModel('eav/entity')->setType('catalog_product')->getTypeId();
     $attribute->setEntityTypeId($entityTypeID);
     $attribute->setIsUserDefined(1);
-    $attribute->save();    
-    //$this->_debug('created attribute with id'.$attribute->getId());
+    $attribute->save();
     return $attribute;
   }
   
@@ -219,7 +234,55 @@ class Sandbourne_BulkApi_Helper_Attribute extends Mage_Core_Helper_Abstract
     
     return $attributeOption;
   }
-   
+  
+  private function setOrAddOptionAttribute($product, $argAttribute, $argValue)
+  {
+    // If we have added a new attribute, or are adding a new option, then we will need to reload the collections and retrieve the new option
+    $reload = true;
+    $valueExists = false;
+    
+    while ($reload)
+    {
+      $attributeModel = Mage::getModel('eav/entity_attribute');
+      $attributeOptionsModel = Mage::getModel('eav/entity_attribute_source_table');
+      
+      $attributeCode = $attributeModel->getIdByCode('catalog_product', $argAttribute);
+      $attribute = $attributeModel->load($attributeCode);
+      
+      $attributeOptionsModel->setAttribute($attribute);
+      $options = $attributeOptionsModel->getAllOptions(false);
+      
+      $reload = false;
+      
+      foreach($options as $option)
+      {
+        if ($option['label'] == $argValue)
+        {
+          $valueExists = true;
+          break;
+        }
+      }
+      
+      // If this option does not exist, add it
+      if (!$valueExists)
+      {
+        $attribute->setData('option', array(
+            'value' => array(
+                'option' => array($argValue),
+                )
+            ));
+        $attribute->save();
+        $valueExists = true;
+        $reload = true;
+      }
+    }
+    
+    if (!empty($option))
+    {
+      $product->setData($attribute['attribute_code'], $option['value']);
+    }
+  }
+     
   public function _debug($message)
   {
     Mage::log($message);

@@ -27,6 +27,8 @@ class Sandbourne_BulkApi_Helper_Category extends Mage_Core_Helper_Abstract
       $path = '1';
       $currentParentID = 1;
       
+      $anchorCategory = (trim((String)$productData->GlobalAnchoring));
+      
       foreach($categoryParts as $categoryPart)
       {
         $foundCategory = $categoryCache->findCategory($currentParentID, $categoryPart);
@@ -34,6 +36,17 @@ class Sandbourne_BulkApi_Helper_Category extends Mage_Core_Helper_Abstract
         if (isset($foundCategory))
         {
           //$magentoCategories = $foundCategory->getChildrenCategories();
+          
+          // Need to load all the EAV's, otherwise some fields like "Include in Navigation Menu", get reset to their defaults.
+          //$foundCategory->load();  // 17/06/2015 - currently causing an error.
+          
+          // Check to see if we are using Category Anchoring
+          $foundCategory->setIsAnchor(0);
+          if ($anchorCategory == 'Y')
+          {
+            $foundCategory->setIsAnchor(1);
+          }
+          $foundCategory->save();
         }
         else
         {
@@ -42,6 +55,13 @@ class Sandbourne_BulkApi_Helper_Category extends Mage_Core_Helper_Abstract
           $foundCategory->setName($categoryPart);
           $foundCategory->setPath($path);
           $foundCategory->setIsActive(1);
+          
+          // Check to see if we are using Category Anchoring
+          $foundCategory->setIsAnchor(0);
+          if ($anchorCategory == 'Y')
+          {
+            $foundCategory->setIsAnchor(1);
+          }
           $foundCategory->save();
           $categoryCache->addCategory($foundCategory);
           //$magentoCategories = $foundCategory->getChildrenCategories();

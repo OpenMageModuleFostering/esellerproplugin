@@ -3,11 +3,11 @@
     "type": "magento-module",
     "license": "OSL",
     "homepage": "",
-    "description": "Extension to allow the creation, amendment and stock control of products from eSellerPro into Magento.",
+    "description": "Extension to allow the creation, amendment and stock control of products from Volo into Magento.",
     "authors": [
     {
-        "name": "eSellerPro",
-        "email": "magento@esellerpro.com"
+        "name": "Volo",
+        "email": "magento@volocommerce.com"
     }
 ],
     "suggest": {

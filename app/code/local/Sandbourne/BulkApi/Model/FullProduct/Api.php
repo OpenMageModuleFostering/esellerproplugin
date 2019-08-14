@@ -9,8 +9,12 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
 
   public function version()
   {
-    //return "1.0.0.6";  // 20140604
-    return "1.0.0.7";  // 20140702
+    //return "1.0.0.6";	// 20140604 (Beta)
+    //return "1.0.0.7";	// 20140702 (Beta)
+    //return "1.1.0.0";	// 20141017 (First Stable release)
+    //return "1.1.0.1";	// 20141121
+    //return "1.1.0.2";	// 20150421
+    return "1.1.0.3";	// 20150618
   }
 
   public function update($productXML)
@@ -111,9 +115,13 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
         $attributeHelper = Mage::helper('bulkapi/attribute');
         $attributeHelper->setCustomFieldGroupValues($product,$productData, $attributeCache);
       }
-    
-      $imageHelper = Mage::helper('bulkapi/image');
-      $imageHelper->setImageList($product, $productData, $productResultXMLData);  //$magentoAttributeList);
+      
+      // Check to see if we have been asked to ignore images
+      if (strcmp($productData->IgnoreImages,'Y') != 0)
+      {
+      	$imageHelper = Mage::helper('bulkapi/image');
+      	$imageHelper->setImageList($product, $productData, $productResultXMLData);  //$magentoAttributeList);
+      }
       
       if ($configurableDataSentFlag)
       {
@@ -154,6 +162,11 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
     
     // Include the RRP price
     $magentoProduct->setMsrp($productData->RRP);
+    
+    // Include the UPC (barcode)
+    // Make sure the customer has an attribute with the Attribute Code of "upc" or "barcode"
+    $magentoProduct->setData("upc", $productData->UPC);
+    $magentoProduct->setData("barcode", $productData->UPC);
     
     // Include sales price info
     if (((string)$productData->OnSale === 'Y') && ((string)$productData->SalePrice > '0'))

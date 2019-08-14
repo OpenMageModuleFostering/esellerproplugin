@@ -39,13 +39,18 @@ class Sandbourne_BulkApi_Model_PartialProduct_Api extends Mage_Api_Model_Resourc
       $product->setStatus($active);
       $product->setPrice($productData->Price);
       
+      $stockData = array();
       $stockData['qty'] = $productData->StockLevel;
-      //$this->_debug('stock level for product:'.$productData->StockLevel);
-      $inStock = ($productData->StockLevel > 0 ? 1 : 0);
-      $stockData['is_in_stock'] = $inStock;
-
-      $product->setStockData($stockData);
+      // Set the 'is_in_stock' to true incase this is a master,
+      // if it is a subsku and the StockLevel is 0, this will automatically get set to false anyhow.
+      //$inStock = ($productData->StockLevel > 0 ? 1 : 0);
+      //$stockData['is_in_stock'] = $inStock;
+      $stockData['is_in_stock'] = 1;
       
+      //$this->_debug($productData);
+      //$this->_debug($stockData);
+      
+      $product->setStockData($stockData);
       $product->save();
     }
   }
