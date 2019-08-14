@@ -17,8 +17,9 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
     //return "1.1.0.3";	// 20150618
     //return "1.1.1.0";	// 20150724 (enhancements 88826, 88828)
     //return "1.1.1.1";	// 20150730 (improvement 88168)
-    return "1.1.1.2"; // 20151125 (Change request be Creative)  
+    //return "1.1.1.2"; // 20151125 (Change request be Creative)  
     //return "1.1.2.0";   // 20151012 (scale prices 92003 - Needs Testing)
+    return "1.1.2.1"; // 201500209 (duplicated images on Website- request from Creative) 
   }
 
   public function update($productXML)
@@ -137,8 +138,8 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
       // After we have saved all the details, lets check to see if we need to update variation scale prices.
       if (strcmp($productData->ScalePricing,'Y') == 0)
       {
-        //$pricesHelper = Mage::helper('bulkapi/prices');
-        //$pricesHelper->scalePrices($product);
+        $pricesHelper = Mage::helper('bulkapi/prices');
+        $pricesHelper->scalePrices($product);
       }
     }
   }

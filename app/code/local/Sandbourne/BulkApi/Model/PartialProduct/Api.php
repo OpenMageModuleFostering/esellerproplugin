@@ -64,8 +64,8 @@ class Sandbourne_BulkApi_Model_PartialProduct_Api extends Mage_Api_Model_Resourc
       // After we have saved all the details, lets check to see if we need to update variation scale prices.
       if (strcmp($productData->ScalePricing,'Y') == 0)
       {
-        //$pricesHelper = Mage::helper('bulkapi/prices');
-        //$pricesHelper->scalePrices($product);
+        $pricesHelper = Mage::helper('bulkapi/prices');
+        $pricesHelper->scalePrices($product);
       }
     }
   }

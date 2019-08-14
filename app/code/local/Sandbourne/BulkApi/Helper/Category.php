@@ -38,7 +38,7 @@ class Sandbourne_BulkApi_Helper_Category extends Mage_Core_Helper_Abstract
           //$magentoCategories = $foundCategory->getChildrenCategories();
           
           // Need to load all the EAV's, otherwise some fields like "Include in Navigation Menu", get reset to their defaults.
-          //$foundCategory->load();  // 17/06/2015 - currently causing an error.
+          $foundCategory->load();  // 17/06/2015 - currently causing an error.
           
           // Check to see if we are using Category Anchoring
           $foundCategory->setIsAnchor(0);

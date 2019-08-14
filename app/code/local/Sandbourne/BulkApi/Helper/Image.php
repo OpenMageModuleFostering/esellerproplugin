@@ -55,7 +55,7 @@ class Sandbourne_BulkApi_Helper_Image extends Mage_Core_Helper_Abstract
     //$this->_debug('findImage:'.$espImageUrl);
     
     $espFilename = basename($espImageUrl);
-    $espFilename = str_replace('%', '_', $espFilename);
+    $espFilename = str_replace(array('%','(',')'), '_', $espFilename);
 
     $pathInfo = pathinfo($espFilename);
     $temp = str_replace('+', '_', $pathInfo['filename']);
