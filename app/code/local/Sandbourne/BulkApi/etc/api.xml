@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<config>
+  <api>
+    <resources>
+      <fullProduct translate="title" module="bulkapi">
+        <model>bulkapi/fullProduct_api</model>
+        <title>Product Bulk Processing Resource</title>
+        <acl>bulkapi_data</acl>
+        <methods>
+          <update translate="title" module="bulkapi">
+            <title>Bulk update product data</title>
+            <method>update</method>
+          </update>
+          <version translate="title" module="bulkapi">
+            <title>Version of the Bulk Api</title>
+            <method>version</method>
+          </version>
+        </methods>
+        <faults module="bulkapi">
+          <data_invalid>
+            <code>100</code>
+            <message>Invalid data. Details in error message.</message>
+          </data_invalid>
+        </faults>
+      </fullProduct>
+      <partialProduct translate="title" module="bulkapi">
+        <model>bulkapi/partialProduct_api</model>
+        <title>Partial Product Bulk Processing Resource</title>
+        <acl>bulkapi_data</acl>
+        <methods>
+          <update translate="title" module="bulkapi">
+            <title>Partial bulk update product data</title>
+            <method>update</method>
+          </update>
+        </methods>
+        <faults module="bulkapi">
+          <data_invalid>
+            <code>100</code>
+            <message>Invalid data. Details in error message.</message>
+          </data_invalid>
+        </faults>
+      </partialProduct>
+      <fullImage translate="title" module="bulkapi">
+        <model>bulkapi/fullImage_api</model>
+        <title>Full Image Bulk Processing Resource</title>
+        <acl>bulkapi_data</acl>
+        <methods>
+          <update translate="title" module="bulkapi">
+            <title>Full image update product data</title>
+            <method>update</method>
+          </update>
+        </methods>
+        <faults module="bulkapi">
+          <data_invalid>
+            <code>100</code>
+            <message>Invalid data. Details in error message.</message>
+          </data_invalid>
+        </faults>
+      </fullImage>
+    </resources>
+    <v2>
+      <resources_function_prefix>
+        <fullProduct>fullProduct</fullProduct>
+        <partialProduct>partialProduct</partialProduct>
+        <fullImage>fullImage</fullImage>
+      </resources_function_prefix>
+    </v2>
+    <acl>
+      <resources>
+        <bulkapi_data translate="title" module="bulkapi">
+          <title>Product Bulk Processing Resource</title>
+          <update translate="title" module="bulkapi">
+            <title>Update</title>
+          </update>
+        </bulkapi_data>
+      </resources>
+    </acl>
+  </api>
+</config>

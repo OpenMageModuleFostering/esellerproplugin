@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/eSellerProPlugin",
+    "type": "magento-module",
+    "license": "OSL",
+    "homepage": "",
+    "description": "Extension to allow the creation, amendment and stock control of products from eSellerPro into Magento.",
+    "authors": [
+    {
+        "name": "eSellerPro",
+        "email": "magento@esellerpro.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

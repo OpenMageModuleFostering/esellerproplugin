@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package>
+    <name>eSellerProPlugin</name>
+    <version>1.0.0.7</version>
+    <stability>beta</stability>
+    <license uri="http://opensource.org/licenses/osl-3.0.php">OSL</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Extension to allow the creation, amendment and stock control of products from eSellerPro into Magento.</summary>
+    <description>&lt;p&gt;&lt;i&gt;You will need to be an existing &lt;b&gt;eSellerPro&lt;/b&gt; customer to be able to use this extension.  It will only work for those who are currently using eSellerPro.  If you are an eSellerPro customer, then feel free to install this extension, but then you will need to contact your Account Manager for activatationt.&lt;/i&gt;&lt;/p&gt;&#xD;
+&lt;p&gt;It allows the pushing of products from eSellerPro to Magento on a singular, or batch process, using eSellerPro's powerful Channel Profile.  Below are some of the features supported:-&lt;/p&gt;&#xD;
+&lt;ul&gt;&#xD;
+&lt;li&gt;Both Simple (Single) and Configurable (Variations) products.&lt;/li&gt;&#xD;
+&lt;li&gt;Multiple Website.&lt;/li&gt;&#xD;
+&lt;li&gt;Multiple Categories.&lt;/li&gt;&#xD;
+&lt;li&gt;Customised Custom Field Groups.&lt;/li&gt;&#xD;
+&lt;li&gt;Automatic Attribute creation.&lt;/li&gt;&#xD;
+&lt;li&gt;Cost Price.&lt;/li&gt;&#xD;
+&lt;li&gt;Manufacturer's Suggested Retail Price (RRP)&lt;/li&gt;&#xD;
+&lt;li&gt;On Sale Price with Start and End dates.&lt;/li&gt;&#xD;
+&lt;li&gt;Weight&lt;/li&gt;&#xD;
+&lt;li&gt;Related Products&lt;/li&gt;&#xD;
+&lt;li&gt;Multiple Images&lt;/li&gt;&#xD;
+&lt;/ul&gt;&#xD;
+&lt;p&gt;Orders are currently pulled from Magento into eSellerPro periodically.  When an order is completed within eSellerPro, the Magento order status and any courier tracking numbers are updated.&lt;/p&gt;</description>
+    <notes>This is currently our beta, being tested by some customers.  If you wish to join the beta programme, please contact your account manager at eSellelrPro.</notes>
+    <authors><author><name>eSellerPro</name><user>eSellerPro</user><email>magento@esellerpro.com</email></author></authors>
+    <date>2014-07-02</date>
+    <time>12:48:08</time>
+    <contents><target name="magelocal"><dir name="Sandbourne"><dir name="BulkApi"><dir name="Helper"><file name="Array.php" hash="0a04d7af6b6d84fed6d1a0097a558abf"/><file name="Attribute.php" hash="62ea78350400981a21ebd024c14a3327"/><file name="AttributeCache.php" hash="258e7fd95a78ff62ff121f4a4776a3a8"/><file name="AttributeOptionCache.php" hash="be30b904d71df0f46f62ed77d6e2fc93"/><file name="Category.php" hash="58c7ca193933025e03cda2ebbcf75b27"/><file name="CategoryCache.php" hash="9201e35bd5e461e5483ea9b66b1306d0"/><file name="ConfigurableProduct.php" hash="6127acd0c0d96a864ed6294ef5445ebd"/><file name="Data.php" hash="7aa739540136122fdba1fa12c72a9cad"/><file name="Image.php" hash="1753b2b15ed4e7c4930c1603c44711e2"/><file name="RelatedProducts.php" hash="e927612b277080a5c835d0ceebd8598c"/><file name="TestData.php" hash="aa72f88ab2ee8cf218e43f59a846da56"/><file name="Utils.php" hash="29beb209f25ab4a462051be7fa6c681b"/><file name="Website.php" hash="0e67b9ba7cd1bbfe8c840991d0aa3079"/></dir><dir name="Model"><dir name="FullImage"><dir name="Api"><file name="V2.php" hash="d998bacd61159399567d1c46e63507a2"/></dir><file name="Api.php" hash="fcff5388032e5cde7485314c6a1d3bf2"/></dir><dir name="FullProduct"><dir name="Api"><file name="V2.php" hash="3cfb906b7c4c72906e3baccb4fdeee40"/></dir><file name="Api.php" hash="943f4aa166fc557f161620d143b0a412"/></dir><dir name="PartialProduct"><dir name="Api"><file name="V2.php" hash="5e9375e74f6ba74bb79f20cce7574ba7"/></dir><file name="Api.php" hash="4175a73c303f07ffed2df5fb1295844e"/></dir><file name="testatts.php" hash="c519db8a12356abfc81a84148809291a"/></dir><dir name="etc"><file name="api.xml" hash="ee96f5255bb710f934c2dcef8e35cd89"/><file name="config.xml" hash="28ba1d03ffbc9c8a641674133a7207f6"/><file name="wsdl.xml" hash="9e291f850362a99b265645a978e45b09"/></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Sandbourne_BulkApi.xml" hash="4418f8514205d4d52a309e83d5050c0d"/></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.1.0</min><max>6.0.0</max></php><package><name>Mage_Core_Modules</name><channel>Community</channel><min/><max/></package></required></dependencies>
+</package>

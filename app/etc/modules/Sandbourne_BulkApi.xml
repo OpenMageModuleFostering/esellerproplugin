@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Sandbourne_BulkApi>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Sandbourne_BulkApi>
+    </modules>
+</config>
