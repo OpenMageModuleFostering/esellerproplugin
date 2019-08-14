@@ -120,6 +120,14 @@ class Sandbourne_BulkApi_Helper_Attribute extends Mage_Core_Helper_Abstract
       {
         switch ($attribute->getFrontendInput())
         {
+          case "multiselect":
+          	// Will only select options already defined within Magento
+          	$sourceModel = Mage::getModel('catalog/product')->getResource()->getAttribute($attributeName)->getSource();
+          	$valuesText = explode('||', $attributeValue);
+          	$valuesIds = array_map(array($sourceModel, 'getOptionId'), $valuesText);
+          	$magentoProduct->setData($attributeName, $valuesIds);
+        	break;
+        	
           case "select":
             $this->setOrAddOptionAttribute($magentoProduct, $attributeName, $attributeValue);
             break;

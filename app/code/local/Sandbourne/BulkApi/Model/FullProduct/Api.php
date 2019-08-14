@@ -14,7 +14,11 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
     //return "1.1.0.0";	// 20141017 (First Stable release)
     //return "1.1.0.1";	// 20141121
     //return "1.1.0.2";	// 20150421
-    return "1.1.0.3";	// 20150618
+    //return "1.1.0.3";	// 20150618
+    //return "1.1.1.0";	// 20150724 (enhancements 88826, 88828)
+    //return "1.1.1.1";	// 20150730 (improvement 88168)
+    return "1.1.1.2"; // 20151125 (Change request be Creative)  
+    //return "1.1.2.0";   // 20151012 (scale prices 92003 - Needs Testing)
   }
 
   public function update($productXML)
@@ -129,6 +133,13 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
         $configurableHelper->setConfigurableProducts($product, $productData, $attributeCache);
       }
       $product->save();
+      
+      // After we have saved all the details, lets check to see if we need to update variation scale prices.
+      if (strcmp($productData->ScalePricing,'Y') == 0)
+      {
+        //$pricesHelper = Mage::helper('bulkapi/prices');
+        //$pricesHelper->scalePrices($product);
+      }
     }
   }
 
@@ -137,6 +148,19 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
     $title = $this->getTitle($productData);
     $magentoProduct->setName($title);
     $magentoProduct->setMetaTitle($title);
+    
+    // Change request be Creative.
+    // Set release date
+    if ((string)$productData->NewRelease == "Y" && $date = (string)$productData->ReleaseDate)
+    {
+      $magentoProduct->setData('news_from_date', $date);
+      $magentoProduct->setData('news_to_date', date("Y-m-d", strtotime("+2 weeks",strtotime($date))));
+    }
+    else
+    {
+      $magentoProduct->setData('news_from_date', "");
+      $magentoProduct->setData('news_to_date', "");
+    }
     
     // Make a double check we have the visibility of the product correct
     if ((string)$productData->SKUType == "Sub")
@@ -191,9 +215,11 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
         Mage_Catalog_Model_Product_Status::STATUS_DISABLED);
 
     $magentoProduct->setStatus($active);
-
     $magentoProduct->setWeight($productData->Weight);
-    $magentoProduct->setTaxClassId(2);
+    
+    // Set the TaxCodeId integer from the TaxCode string
+    //$magentoProduct->setTaxClassId(2);
+    $magentoProduct->setTaxClassId($this->setTaxCodeClass($productData->TaxCode));
 
     $stockData = array();
     $stockData['qty'] = $productData->StockLevel;
@@ -217,6 +243,51 @@ class Sandbourne_BulkApi_Model_FullProduct_Api extends Mage_Api_Model_Resource_A
       $title = $productData->Title;
     }
     return $title;
+  }
+  
+  private function setTaxCodeClass($taxCode)
+  {
+  	$retVal = 2;
+  	
+  	// Magento Product Tax Class standard definitions.
+  	// 0 - None
+  	// 1 - Default
+  	// 2 - Taxable Goods
+  	// 3 - Retail Customer
+  	// 4 - Shipping
+  	// 5 - VAT Standard
+  	// 6 - VAT Reduced
+  	// 7 - VAT Zero
+  	
+  	// As a standard default, we set the $taxCode to; 2 - Taxable Goods
+  	// To change this, create a new tax code in Volo under "Value Added Tax" and and with a pipe and the required code, i.e. "Shipping|4".
+  	
+  	if (stripos($taxCode, "|"))
+  	{
+  		list($strIgnore, $strNumber) = array_pad(explode("|", $taxCode, 2), 2, "2");
+  		$retVal = intval($strNumber);
+  	}
+  	else
+  	{
+  		switch ($taxCode)
+  		{
+  			case "E":
+  				$retVal = 0;
+  				break;
+  				
+  			case "Z":
+  				$retVal = 7;
+  				break;
+  				
+  			case "S":
+  				$retVal = 5;
+  				break;
+  				
+  			default:
+  				$retVal = 2;
+  		}
+  	}
+  	return $retVal;
   }
 
   public function _debug($message)

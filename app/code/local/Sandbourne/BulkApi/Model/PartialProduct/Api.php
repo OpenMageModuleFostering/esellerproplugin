@@ -17,7 +17,6 @@ class Sandbourne_BulkApi_Model_PartialProduct_Api extends Mage_Api_Model_Resourc
     
     foreach ($productXMLData as $productData)
     {
-      //$this->_debug($productData->StockNumber);
       $productResultXMLData = new DOMElement('ProductResult');
       $productResultsXMLData->appendChild($productResultXMLData);
       $this->updateProduct($productData, $productResultXMLData);
@@ -29,7 +28,6 @@ class Sandbourne_BulkApi_Model_PartialProduct_Api extends Mage_Api_Model_Resourc
     $productID = Mage::getModel('catalog/product')->getIdBySku($productData->StockNumber);
     if ($productID > 0)
     {
-      //$this->_debug('product exists with id:'.$productID);
       $product = Mage::getModel('catalog/product')->load($productID);
       
       $active = ((string)$productData->IsActive === 'Y' ? 
@@ -38,6 +36,19 @@ class Sandbourne_BulkApi_Model_PartialProduct_Api extends Mage_Api_Model_Resourc
 
       $product->setStatus($active);
       $product->setPrice($productData->Price);
+         
+      // Include sales price info
+      // 20150730 - Currently on a partial update, only SalePrice is sent via the XML if the OnSale flag is set
+      if ((string)$productData->SalePrice > '0')
+      {
+      	$product->setSpecialPrice($productData->SalePrice);
+      }
+      else
+      {
+      	$product->setSpecialPrice('');
+      	$product->setSpecialFromDate('');
+      	$product->setSpecialToDate('');
+      }
       
       $stockData = array();
       $stockData['qty'] = $productData->StockLevel;
@@ -46,12 +57,16 @@ class Sandbourne_BulkApi_Model_PartialProduct_Api extends Mage_Api_Model_Resourc
       //$inStock = ($productData->StockLevel > 0 ? 1 : 0);
       //$stockData['is_in_stock'] = $inStock;
       $stockData['is_in_stock'] = 1;
-      
-      //$this->_debug($productData);
-      //$this->_debug($stockData);
-      
+           
       $product->setStockData($stockData);
       $product->save();
+      
+      // After we have saved all the details, lets check to see if we need to update variation scale prices.
+      if (strcmp($productData->ScalePricing,'Y') == 0)
+      {
+        //$pricesHelper = Mage::helper('bulkapi/prices');
+        //$pricesHelper->scalePrices($product);
+      }
     }
   }
   
