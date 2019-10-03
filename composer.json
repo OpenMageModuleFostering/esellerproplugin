@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/eSellerProPlugin",
+    "name": "OpenMageModuleFostering\/eSellerProPlugin",
     "type": "magento-module",
     "license": "OSL",
     "homepage": "",
     "description": "Summary in here",
     "authors": [
-    {
-        "name": "Volo",
-        "email": "magento@volocommerce.com"
-    }
-],
+        {
+            "name": "Volo",
+            "email": "magento@volocommerce.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
