@@ -1,7 +1,7 @@
 {
-    "name": "OpenMageModuleFostering\/eSellerProPlugin",
+    "name": "openmage-module-fostering\/esellerproplugin",
     "type": "magento-module",
-    "license": "OSL",
+    "license": "OSL-3.0",
     "homepage": "",
     "description": "Summary in here",
     "authors": [
